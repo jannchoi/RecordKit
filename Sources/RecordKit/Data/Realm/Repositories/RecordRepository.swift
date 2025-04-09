@@ -104,8 +104,6 @@ class RecordRepository: RecordRepositoryProtocol {
         return dataSource.updateProgressNote(id: id, at: index, note: note)
     }
 
-    func removeProgressNote(id: String, at index: Int) -> AnyPublisher<Void, Error> {
-        return dataSource.removeProgressNote(id: id, at: index)
-    }
+
 }
 
