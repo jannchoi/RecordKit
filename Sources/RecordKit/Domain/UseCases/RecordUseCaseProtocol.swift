@@ -7,9 +7,9 @@
 
 import Foundation
 import Combine
-import RealmSwift
+
 @available(iOS 13.0, *)
-protocol RecordRepositoryProtocol {
+protocol RecordUseCaseProtocol {
     func getAllNotes() -> AnyPublisher<[RecordEntity], Error>
     func getNote(with id: String) -> AnyPublisher<RecordEntity?, Error>
     func saveNote(_ note: RecordEntity) -> AnyPublisher<String, Error>
@@ -19,11 +19,10 @@ protocol RecordRepositoryProtocol {
     func getNotes(withCategory category: String) -> AnyPublisher<[RecordEntity], Error>
     func getNotes(withFeeling feeling: FeelingTag) -> AnyPublisher<[RecordEntity], Error>
     func resetNotes() -> AnyPublisher<Void, Error>
-    func updateMetaData(id: String, metaData: MetadataEntity) ->  AnyPublisher<Void, Error>
+    func updateMetaData(id: String, metaData: MetadataEntity) -> AnyPublisher<Void, Error>
     func updateDetail(id: String, detail: DetailEntity) -> AnyPublisher<Void, Error>
     func updateBeforeNote(id: String, note: NoteEntity?) -> AnyPublisher<Void, Error>
     func updateAfterNote(id: String, note: NoteEntity?) -> AnyPublisher<Void, Error>
     func addProgressNote(id: String, note: ProgressNoteEntity) -> AnyPublisher<Void, Error>
     func updateProgressNote(id: String, at index: Int, note: ProgressNoteEntity) -> AnyPublisher<Void, Error>
-
 }
