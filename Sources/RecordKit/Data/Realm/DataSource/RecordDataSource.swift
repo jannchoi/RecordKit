@@ -11,13 +11,16 @@ import RealmSwift
 
 @available(iOS 13.0, *)
 class RecordDataSource: RecordDataSourceProtocol {
-    private let realm: Realm
 
-    init(realm: Realm) {
+    private let realm: Realm
+    private let mapper: RecordMapperProtocol
+
+    init(realm: Realm = try! Realm(), mapper: RecordMapperProtocol) {
         self.realm = realm
+        self.mapper = mapper
     }
 
-    func getAllBooks() -> AnyPublisher<[Record], Error> {
+    func getAllNotes() -> AnyPublisher<[Record], Error> {
         Deferred {
             let records = Array(self.realm.objects(Record.self))
             return Just(records)
@@ -26,7 +29,7 @@ class RecordDataSource: RecordDataSourceProtocol {
         .eraseToAnyPublisher()
     }
 
-    func getBook(with id: String) -> AnyPublisher<Record?, Error> {
+    func getNote(with id: String) -> AnyPublisher<Record?, Error> {
         Deferred {
             let record = self.realm.object(ofType: Record.self, forPrimaryKey: id)
             return Just(record)
@@ -35,7 +38,7 @@ class RecordDataSource: RecordDataSourceProtocol {
         .eraseToAnyPublisher()
     }
 
-    func saveBook(_ record: Record) -> AnyPublisher<String, Error> {
+    func saveNote(_ record: Record) -> AnyPublisher<String, Error> {
         Deferred {
             Future<String, Error> { promise in
                 do {
@@ -51,12 +54,12 @@ class RecordDataSource: RecordDataSourceProtocol {
         .eraseToAnyPublisher()
     }
 
-    func updateBook(_ record: Record) -> AnyPublisher<Void, Error> {
+    func updateNote(_ note: Record) -> AnyPublisher<Void, Error> {
         Deferred {
             Future<Void, Error> { promise in
                 do {
                     try self.realm.write {
-                        self.realm.add(record, update: .modified)
+                        self.realm.add(note, update: .modified)
                     }
                     promise(.success(()))
                 } catch {
@@ -67,7 +70,7 @@ class RecordDataSource: RecordDataSourceProtocol {
         .eraseToAnyPublisher()
     }
 
-    func deleteBook(with id: String) -> AnyPublisher<Void, Error> {
+    func deleteNote(with id: String) -> AnyPublisher<Void, Error> {
         Deferred {
             Future<Void, Error> { promise in
                 do {
@@ -85,7 +88,7 @@ class RecordDataSource: RecordDataSourceProtocol {
         .eraseToAnyPublisher()
     }
 
-    func getBooks(withStatus status: RecordStatus) -> AnyPublisher<[Record], Error> {
+    func getNotes(withStatus status: RecordStatus) -> AnyPublisher<[Record], Error> {
         Deferred {
             let records = self.realm.objects(Record.self).filter("status == %@", status.rawValue)
             return Just(Array(records))
@@ -94,7 +97,7 @@ class RecordDataSource: RecordDataSourceProtocol {
         .eraseToAnyPublisher()
     }
 
-    func getBooks(withCategory category: String) -> AnyPublisher<[Record], Error> {
+    func getNotes(withCategory category: String) -> AnyPublisher<[Record], Error> {
         Deferred {
             let records = self.realm.objects(Record.self).filter("ANY categories == %@", category)
             return Just(Array(records))
@@ -103,16 +106,16 @@ class RecordDataSource: RecordDataSourceProtocol {
         .eraseToAnyPublisher()
     }
 
-    func getBooks(withFeeling feeling: FeelingTagObject) -> AnyPublisher<[Record], Error> {
+    func getNotes(withFeelingName name: String) -> AnyPublisher<[Record], Error> {
         Deferred {
-            let records = self.realm.objects(Record.self).filter("ANY feelings == %@", feeling)
+            let records = self.realm.objects(Record.self).filter("ANY feelings.name == %@", name)
             return Just(Array(records))
                 .setFailureType(to: Error.self)
         }
         .eraseToAnyPublisher()
     }
 
-    func resetBooks() -> AnyPublisher<Void, Error> {
+    func resetNotes() -> AnyPublisher<Void, Error> {
         Deferred {
             Future<Void, Error> { promise in
                 do {
@@ -127,4 +130,151 @@ class RecordDataSource: RecordDataSourceProtocol {
         }
         .eraseToAnyPublisher()
     }
+    func updateMetaData(id: String, metaData: MetadataEntity) -> AnyPublisher<Void, Error> {
+           Deferred {
+               Future { promise in
+                   do {
+                       guard let record = self.realm.object(ofType: Record.self, forPrimaryKey: id) else {
+                           throw NSError(domain: "Record not found", code: 0)
+                       }
+                       try self.realm.write {
+                           record.title = metaData.title
+                           record.subtitle = metaData.subtitle
+                           record.addedDate = metaData.addedDate
+                           record.thumbnailPath = metaData.thumbnailPath
+                       }
+                       promise(.success(()))
+                   } catch {
+                       promise(.failure(error))
+                   }
+               }
+           }
+           .eraseToAnyPublisher()
+       }
+
+       // MARK: - Detail 업데이트
+       func updateDetail(id: String, detail: DetailEntity) -> AnyPublisher<Void, Error> {
+           Deferred {
+               Future { promise in
+                   do {
+                       guard let record = self.realm.object(ofType: Record.self, forPrimaryKey: id) else {
+                           throw NSError(domain: "Record not found", code: 0)
+                       }
+
+                       let feelingObjects = detail.feelingTags.map { tag in
+                           let obj = FeelingTagObject()
+                           obj.name = tag.name
+                           obj.colorHex = tag.colorHex
+                           obj.emoji = tag.emoji
+                           return obj
+                       }
+
+                       try self.realm.write {
+                           record.recordStatus = RecordStatus(rawValue: detail.status.rawValue) ?? .unread
+                           record.shortNote = detail.shortNote
+                           record.categoryTags.removeAll()
+                           record.categoryTags.append(objectsIn: detail.categoryTags)
+                           record.feelingTags.removeAll()
+                           record.feelingTags.append(objectsIn: feelingObjects)
+                       }
+                       promise(.success(()))
+                   } catch {
+                       promise(.failure(error))
+                   }
+               }
+           }
+           .eraseToAnyPublisher()
+       }
+
+       // MARK: - Before Note 업데이트
+       func updateBeforeNote(id: String, note: NoteEntity?) -> AnyPublisher<Void, Error> {
+           Deferred {
+               Future { promise in
+                   do {
+                       guard let record = self.realm.object(ofType: Record.self, forPrimaryKey: id) else {
+                           throw NSError(domain: "Record not found", code: 0)
+                       }
+
+                       try self.realm.write {
+                           record.beforeNote = note.map { self.mapper.mapToRealm(note: $0) }
+                       }
+                       promise(.success(()))
+                   } catch {
+                       promise(.failure(error))
+                   }
+               }
+           }
+           .eraseToAnyPublisher()
+       }
+
+       // MARK: - After Note 업데이트
+       func updateAfterNote(id: String, note: NoteEntity?) -> AnyPublisher<Void, Error> {
+           Deferred {
+               Future { promise in
+                   do {
+                       guard let record = self.realm.object(ofType: Record.self, forPrimaryKey: id) else {
+                           throw NSError(domain: "Record not found", code: 0)
+                       }
+
+                       try self.realm.write {
+                           record.afterNote = note.map { self.mapper.mapToRealm(note: $0) }
+                       }
+                       promise(.success(()))
+                   } catch {
+                       promise(.failure(error))
+                   }
+               }
+           }
+           .eraseToAnyPublisher()
+       }
+
+       // MARK: - Progress Note 추가
+       func addProgressNote(id: String, note: ProgressNoteEntity) -> AnyPublisher<Void, Error> {
+           Deferred {
+               Future { promise in
+                   do {
+                       guard let record = self.realm.object(ofType: Record.self, forPrimaryKey: id) else {
+                           throw NSError(domain: "Record not found", code: 0)
+                       }
+
+                       let realmNote = self.mapper.mapToRealm(progressNote: note)
+
+                       try self.realm.write {
+                           record.inProgressNote.append(realmNote)
+                       }
+
+                       promise(.success(()))
+                   } catch {
+                       promise(.failure(error))
+                   }
+               }
+           }
+           .eraseToAnyPublisher()
+       }
+
+       // MARK: - Progress Note 수정
+       func updateProgressNote(id: String, at index: Int, note: ProgressNoteEntity) -> AnyPublisher<Void, Error> {
+           Deferred {
+               Future { promise in
+                   do {
+                       guard let record = self.realm.object(ofType: Record.self, forPrimaryKey: id),
+                             record.inProgressNote.indices.contains(index) else {
+                           throw NSError(domain: "ProgressNote not found", code: 0)
+                       }
+
+                       let updatedNote = self.mapper.mapToRealm(progressNote: note)
+
+                       try self.realm.write {
+                           record.inProgressNote[index] = updatedNote
+                       }
+
+                       promise(.success(()))
+                   } catch {
+                       promise(.failure(error))
+                   }
+               }
+           }
+           .eraseToAnyPublisher()
+       }
+
 }

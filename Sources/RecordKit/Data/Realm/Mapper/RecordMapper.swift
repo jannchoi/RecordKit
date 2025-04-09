@@ -58,7 +58,7 @@ final class RecordMapper: RecordMapperProtocol {
 }
 
 // MARK: - Note Mapping
-private extension RecordMapper {
+extension RecordMapper {
     func mapToDomain(note: Note) -> NoteEntity {
         return NoteEntity(
             date: note.date,
@@ -75,7 +75,7 @@ private extension RecordMapper {
 }
 
 // MARK: - ProgressNote Mapping
-private extension RecordMapper {
+extension RecordMapper {
     func mapToDomain(progressNote: ProgressNote) -> ProgressNoteEntity {
         return ProgressNoteEntity(
             startPage: progressNote.startPage?.description,

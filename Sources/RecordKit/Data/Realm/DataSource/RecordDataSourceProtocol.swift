@@ -11,13 +11,19 @@ import RealmSwift
 
 @available(iOS 13.0, *)
 protocol RecordDataSourceProtocol {
-    func getAllBooks() -> AnyPublisher<[Record], Error>
-    func getBook(with id: String) -> AnyPublisher<Record?, Error>
-    func saveBook(_ book: Record) -> AnyPublisher<String, Error>
-    func updateBook(_ book: Record) -> AnyPublisher<Void, Error>
-    func deleteBook(with id: String) -> AnyPublisher<Void, Error>
-    func getBooks(withStatus status: RecordStatus) -> AnyPublisher<[Record], Error>
-    func getBooks(withCategory category: String) -> AnyPublisher<[Record], Error>
-    func getBooks(withFeeling feeling: FeelingTagObject) -> AnyPublisher<[Record], Error>
-    func resetBooks() -> AnyPublisher<Void, Error>
+    func getAllNotes() -> AnyPublisher<[Record], Error>
+    func getNote(with id: String) -> AnyPublisher<Record?, Error>
+    func saveNote(_ note: Record) -> AnyPublisher<String, Error>
+    func updateNote(_ note: Record) -> AnyPublisher<Void, Error>
+    func deleteNote(with id: String) -> AnyPublisher<Void, Error>
+    func getNotes(withStatus status: RecordStatus) -> AnyPublisher<[Record], Error>
+    func getNotes(withCategory category: String) -> AnyPublisher<[Record], Error>
+    func getNotes(withFeelingName name: String) -> AnyPublisher<[Record], Error>
+    func resetNotes() -> AnyPublisher<Void, Error>
+    func updateMetaData(id: String, metaData: MetadataEntity) ->  AnyPublisher<Void, Error>
+    func updateDetail(id: String, detail: DetailEntity) -> AnyPublisher<Void, Error>
+    func updateBeforeNote(id: String, note: NoteEntity?) -> AnyPublisher<Void, Error>
+    func updateAfterNote(id: String, note: NoteEntity?) -> AnyPublisher<Void, Error>
+    func addProgressNote(id: String, note: ProgressNoteEntity) -> AnyPublisher<Void, Error>
+    func updateProgressNote(id: String, at index: Int, note: ProgressNoteEntity) -> AnyPublisher<Void, Error>
 }

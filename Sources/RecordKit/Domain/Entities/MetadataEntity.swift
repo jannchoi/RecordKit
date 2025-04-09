@@ -9,6 +9,6 @@ import Foundation
 struct MetadataEntity {
     let title: String
     let subtitle: String
-    let addedDate: Date?
+    let addedDate: Date
     let thumbnailPath: String?
 }
