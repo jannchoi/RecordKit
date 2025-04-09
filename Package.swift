@@ -5,14 +5,16 @@ import PackageDescription
 
 let package = Package(
     name: "RecordKit",
+    platforms: [
+        .iOS(.v13)
+    ],
     products: [
-        // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
             name: "RecordKit",
             targets: ["RecordKit"]),
     ],
     dependencies: [
-            .package(url: "https://github.com/realm/realm-swift.git", from: "20.0.1")
+        .package(url: "https://github.com/realm/realm-swift.git", .upToNextMajor(from: "20.0.1"))
         ],
     targets: [
         .target(
@@ -21,6 +23,5 @@ let package = Package(
                 .product(name: "RealmSwift", package: "realm-swift")
             ]
         ),
-        
     ]
 )
