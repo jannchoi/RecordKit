@@ -9,7 +9,7 @@ import Foundation
 import RealmSwift
 
 enum RecordStatus: String, PersistableEnum {
-    case unread
+    case before
     case inProgress
     case completed
 }

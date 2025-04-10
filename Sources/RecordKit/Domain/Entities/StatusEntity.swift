@@ -9,5 +9,5 @@ import Foundation
 enum StatusEntity: String, CaseIterable {
     case before
     case inProgress
-    case onCompleted 
+    case completed
 }

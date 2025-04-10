@@ -11,7 +11,7 @@ import RealmSwift
 final class RecordMapper: RecordMapperProtocol {
 
     func mapToDomain(realmModel: Record) -> RecordEntity {
-        return RecordEntity(
+        let recordEntity = RecordEntity(
             id: realmModel.id,
             metaData: MetadataEntity(
                 title: realmModel.title,
@@ -31,28 +31,44 @@ final class RecordMapper: RecordMapperProtocol {
             inProgressRecord: realmModel.inProgressNote.map { mapToDomain(progressNote: $0) },
             afterRecord: realmModel.afterNote.map { mapToDomain(note: $0) }
         )
+        return recordEntity
     }
 
     // MARK: - Domain → Realm
     func mapToRealm(domainModel: RecordEntity) -> Record {
-        let record = Record(
-            imagePath: domainModel.metaData.thumbnailPath,
-            title: domainModel.metaData.title,
-            author: domainModel.metaData.subtitle,
-            recordStatus: RecordStatus(rawValue: domainModel.detail.status.rawValue) ?? .unread,
-            shortNote: domainModel.detail.shortNote,
-            categories: domainModel.detail.categoryTags,
-            feelings: domainModel.detail.feelingTags.map {
-                let tag = FeelingTagObject()
-                tag.name = $0.name
-                tag.colorHex = $0.colorHex
-                tag.emoji = $0.emoji
-                return tag
-            },
-            beforeNote: domainModel.beforeRecord.map { mapToRealm(note: $0) },
-            inProgressNote: domainModel.inProgressRecord.map { mapToRealm(progressNote: $0) },
-            afterNote: domainModel.afterRecord.map { mapToRealm(note: $0) }
-        )
+        let record = Record()
+        record.id = domainModel.id
+        record.thumbnailPath = domainModel.metaData.thumbnailPath
+        
+        record.title = domainModel.metaData.title
+        
+        record.subtitle = domainModel.metaData.subtitle
+        
+        record.recordStatus = RecordStatus(rawValue: domainModel.detail.status.rawValue) ?? .before
+        
+        record.shortNote = domainModel.detail.shortNote
+        
+        record.categoryTags.removeAll()
+        domainModel.detail.categoryTags.forEach {
+            record.categoryTags.append($0)
+        }
+        
+        record.feelingTags.removeAll()
+        domainModel.detail.feelingTags.forEach {
+            let tag = FeelingTagObject()
+            tag.name = $0.name
+            tag.colorHex = $0.colorHex
+            tag.emoji = $0.emoji
+            record.feelingTags.append(tag)
+        }
+
+        record.beforeNote = domainModel.beforeRecord.map { mapToRealm(note: $0) }
+        record.inProgressNote.removeAll()
+        domainModel.inProgressRecord.forEach{
+            record.inProgressNote.append(mapToRealm(progressNote: $0))
+        }
+        record.afterNote = domainModel.afterRecord.map { mapToRealm(note: $0) }
+
         return record
     }
 }

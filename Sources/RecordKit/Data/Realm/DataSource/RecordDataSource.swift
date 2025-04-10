@@ -170,7 +170,7 @@ class RecordDataSource: RecordDataSourceProtocol {
                        }
 
                        try self.realm.write {
-                           record.recordStatus = RecordStatus(rawValue: detail.status.rawValue) ?? .unread
+                           record.recordStatus = RecordStatus(rawValue: detail.status.rawValue) ?? .before
                            record.shortNote = detail.shortNote
                            record.categoryTags.removeAll()
                            record.categoryTags.append(objectsIn: detail.categoryTags)
