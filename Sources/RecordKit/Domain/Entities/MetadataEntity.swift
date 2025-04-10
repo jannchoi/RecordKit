@@ -7,8 +7,20 @@
 
 import Foundation
 public struct MetadataEntity {
-    let title: String
-    let subtitle: String
-    let addedDate: Date
-    let thumbnailPath: String?
+    public let title: String
+    public let subtitle: String
+    public let addedDate: Date
+    public let thumbnailPath: String?
+
+    public init(
+        title: String,
+        subtitle: String,
+        addedDate: Date,
+        thumbnailPath: String?
+    ) {
+        self.title = title
+        self.subtitle = subtitle
+        self.addedDate = addedDate
+        self.thumbnailPath = thumbnailPath
+    }
 }

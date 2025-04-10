@@ -7,7 +7,7 @@
 
 import Foundation
 public struct FeelingTag {
-    let name: String
-    let colorHex: String
-    let emoji: String
+    public let name: String
+    public let colorHex: String
+    public let emoji: String
 }

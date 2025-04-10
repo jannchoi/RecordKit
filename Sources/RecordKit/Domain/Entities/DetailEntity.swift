@@ -7,9 +7,20 @@
 
 import Foundation
 public struct DetailEntity {
-    let status: StatusEntity
-    let shortNote: String
-    let categoryTags: [String]
-    let feelingTags: [FeelingTag]
-}
+    public let status: StatusEntity
+    public let shortNote: String
+    public let categoryTags: [String]
+    public let feelingTags: [FeelingTag]
 
+    public init(
+        status: StatusEntity,
+        shortNote: String,
+        categoryTags: [String],
+        feelingTags: [FeelingTag]
+    ) {
+        self.status = status
+        self.shortNote = shortNote
+        self.categoryTags = categoryTags
+        self.feelingTags = feelingTags
+    }
+}

@@ -7,11 +7,28 @@
 
 import Foundation
 public struct RecordEntity {
-    var id: String = UUID().uuidString
-    var metaData : MetadataEntity
-    var detail: DetailEntity
-    var beforeRecord: NoteEntity?
-    var inProgressRecord: [ProgressNoteEntity]
-    var afterRecord: NoteEntity?
+    public var id: String
+    public var metaData: MetadataEntity
+    public var detail: DetailEntity
+    public var beforeRecord: NoteEntity?
+    public var inProgressRecord: [ProgressNoteEntity]
+    public var afterRecord: NoteEntity?
+
+    public init(
+        id: String = UUID().uuidString,
+        metaData: MetadataEntity,
+        detail: DetailEntity,
+        beforeRecord: NoteEntity?,
+        inProgressRecord: [ProgressNoteEntity],
+        afterRecord: NoteEntity?
+    ) {
+        self.id = id
+        self.metaData = metaData
+        self.detail = detail
+        self.beforeRecord = beforeRecord
+        self.inProgressRecord = inProgressRecord
+        self.afterRecord = afterRecord
+    }
 }
+
 
