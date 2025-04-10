@@ -9,7 +9,7 @@ import Foundation
 import Combine
 
 @available(iOS 13.0, *)
-protocol RecordUseCaseProtocol {
+public protocol RecordUseCaseProtocol {
     func getAllNotes() -> AnyPublisher<[RecordEntity], Error>
     func getNote(with id: String) -> AnyPublisher<RecordEntity?, Error>
     func saveNote(_ note: RecordEntity) -> AnyPublisher<String, Error>

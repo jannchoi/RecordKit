@@ -6,7 +6,7 @@
 //
 
 import Foundation
-struct MetadataEntity {
+public struct MetadataEntity {
     let title: String
     let subtitle: String
     let addedDate: Date

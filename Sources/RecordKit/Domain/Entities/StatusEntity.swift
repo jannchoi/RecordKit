@@ -6,7 +6,7 @@
 //
 
 import Foundation
-enum StatusEntity: String, CaseIterable {
+public enum StatusEntity: String, CaseIterable {
     case before
     case inProgress
     case completed

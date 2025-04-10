@@ -9,7 +9,7 @@ import Foundation
 import Combine
 import RealmSwift
 @available(iOS 13.0, *)
-protocol RecordRepositoryProtocol {
+public protocol RecordRepositoryProtocol {
     func getAllNotes() -> AnyPublisher<[RecordEntity], Error>
     func getNote(with id: String) -> AnyPublisher<RecordEntity?, Error>
     func saveNote(_ note: RecordEntity) -> AnyPublisher<String, Error>

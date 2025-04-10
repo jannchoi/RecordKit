@@ -6,7 +6,7 @@
 //
 
 import Foundation
-struct NoteEntity {
+public struct NoteEntity {
     let id = UUID()
     let date: Date?
     let note: String

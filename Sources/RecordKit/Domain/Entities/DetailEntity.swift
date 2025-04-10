@@ -6,7 +6,7 @@
 //
 
 import Foundation
-struct DetailEntity {
+public struct DetailEntity {
     let status: StatusEntity
     let shortNote: String
     let categoryTags: [String]
