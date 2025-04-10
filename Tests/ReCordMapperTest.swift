@@ -20,13 +20,13 @@ final class ReCordMapperTest: XCTestCase {
     }
     
     func test_toRealm_withValidEntity_returnsRecordObject() throws {
-        // given
-        let entity = RecordEntity(id: "1234", metaData: MetadataEntity(title: "teTitle", subtitle: "teSubtitle", addedDate: Date(), thumbnailPath: "imhPath"), detail: DetailEntity(status: .before, shortNote: "myshort", categoryTags: ["drama"], feelingTags: [FeelingTag(name: "happy", colorHex: "red", emoji: "smile")]), beforeRecord: NoteEntity(date: Date(), note: "beforeNote"), inProgressRecord: [], afterRecord: nil)
+
+        let entity = RecordEntity(id: UUID().uuidString, metaData: MetadataEntity(title: "teTitle", subtitle: "teSubtitle", addedDate: Date(), thumbnailPath: "imhPath"), detail: DetailEntity(status: .before, shortNote: "myshort", categoryTags: ["drama"], feelingTags: [FeelingTag(name: "happy", colorHex: "red", emoji: "smile")]), beforeRecord: NoteEntity(date: Date(), note: "beforeNote"), inProgressRecord: [], afterRecord: nil)
         
-        // when
+
         let object = mapper.mapToRealm(domainModel: entity)
-        print(object.feelingTags)
-        // then
+
+
         XCTAssertEqual(object.id, entity.id)
         XCTAssertEqual(object.title, entity.metaData.title)
         XCTAssertEqual(object.recordStatus.rawValue, entity.detail.status.rawValue)
@@ -35,16 +35,16 @@ final class ReCordMapperTest: XCTestCase {
     }
 
     func test_toEntity_withValidObject_returnsEntity() throws {
-        // given
+
         let object = Record()
-        object.id = "456"
+        object.id = UUID().uuidString
         object.title = "테스트 제목"
         object.recordStatus = .completed
         object.categoryTags.append("Drama")
-        // when
+
         let entity = mapper.mapToDomain(realmModel: object)
         
-        // then
+
         XCTAssertEqual(entity.id, object.id)
         XCTAssertEqual(entity.metaData.title, object.title)
         XCTAssertEqual(entity.detail.status.rawValue, object.recordStatus.rawValue)
