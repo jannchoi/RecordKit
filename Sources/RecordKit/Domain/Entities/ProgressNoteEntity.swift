@@ -6,7 +6,7 @@
 //
 
 import Foundation
-struct ProgressNoteEntity {
+public struct ProgressNoteEntity {
     let id = UUID()
     let startPage: String?
     let endPage: String?

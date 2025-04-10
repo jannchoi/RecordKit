@@ -6,7 +6,7 @@
 //
 
 import Foundation
-struct FeelingTag {
+public struct FeelingTag {
     let name: String
     let colorHex: String
     let emoji: String

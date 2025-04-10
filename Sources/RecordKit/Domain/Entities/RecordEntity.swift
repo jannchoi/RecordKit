@@ -6,7 +6,7 @@
 //
 
 import Foundation
-struct RecordEntity {
+public struct RecordEntity {
     var id: String = UUID().uuidString
     var metaData : MetadataEntity
     var detail: DetailEntity
