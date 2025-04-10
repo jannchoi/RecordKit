@@ -52,7 +52,7 @@ class RecordRepository: RecordRepositoryProtocol {
     }
     
     func getNotes(withStatus status: StatusEntity) -> AnyPublisher<[RecordEntity], Error> {
-        let realmStatus = RecordStatus(rawValue: status.rawValue) ?? .unread
+        let realmStatus = RecordStatus(rawValue: status.rawValue) ?? .before
         return dataSource.getNotes(withStatus: realmStatus)
             .map { note in
                 note.map { self.mapper.mapToDomain(realmModel: $0) }

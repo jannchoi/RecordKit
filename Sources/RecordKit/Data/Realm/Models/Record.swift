@@ -9,7 +9,7 @@ import Foundation
 import RealmSwift
 
 class Record: Object {
-    @Persisted(primaryKey: true) var id: String = UUID().uuidString
+    @Persisted(primaryKey: true) var id: String
     @Persisted var thumbnailPath: String?
     @Persisted var addedDate: Date
     @Persisted var title: String
@@ -22,7 +22,7 @@ class Record: Object {
     @Persisted var inProgressNote: List<ProgressNote>
     @Persisted var afterNote: Note?
 
-    convenience init(
+    convenience init(id: String,
         imagePath: String?,
         title: String,
         author: String,
@@ -35,6 +35,7 @@ class Record: Object {
         afterNote: Note?
     ) {
         self.init()
+        self.id = id
         self.thumbnailPath = imagePath
         self.addedDate = Date()
         self.title = title
